@@ -29,7 +29,6 @@ public class Calc extends JFrame implements ActionListener {
             buttons[i] = new JButton(cal[i]);
         }
         panel = new JPanel();
-        panel.setBackground(Color.DARK_GRAY);
         resultField = new JTextField();
         resultField.setBounds(0,0,400,100);
     }
@@ -73,6 +72,12 @@ public class Calc extends JFrame implements ActionListener {
         JButton selectButton = (JButton) e.getSource();
         if(selectButton == buttons[buttons.length - 1]){
             resultField.setText(" = 입력");
+        } else if (selectButton == buttons[1]) {
+            currentString ="";
+            resultField.setText(currentString);
+        } else if (selectButton == buttons[2]) {
+            currentString = currentString.substring(0,currentString.length() - 2);
+            resultField.setText(currentString);
         } else {
             resultField.setText(currentString + " " + selectButton.getText());
         }
