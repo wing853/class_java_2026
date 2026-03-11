@@ -43,13 +43,38 @@ public class LottoFrame extends JFrame implements ActionListener {
     }
 
     static class Circle extends JPanel {
-        public void paint(Graphics g){
-            g.drawArc(50,100,50,50,0,360);
-            g.drawArc(120,100,50,50,0,360);
-            g.drawArc(190,100,50,50,0,360);
-            g.drawArc(260,100,50,50,0,360);
-            g.drawArc(330,100,50,50,0,360);
-            g.drawArc(390,100,50,50,0,360);
+        int[] numbers;
+
+        public Circle(int[] numbers) {
+            this.numbers = numbers;
+        }
+
+        public void paint(Graphics g) {
+            int x = 50;
+            g.setFont(new Font("맑은고딕", Font.BOLD,15));
+            for (int i = 0; i < numbers.length; i++) {
+                if(numbers[i] <= 10){
+                    g.setColor(Color.YELLOW);
+                } else if (numbers[i]<=20) {
+                    g.setColor(Color.BLUE);
+                } else if (numbers[i] <= 30) {
+                    g.setColor(Color.RED);
+                } else if (numbers[i] <= 40) {
+                    g.setColor(Color.GRAY);
+                } else if(numbers[i] <=45){
+                    g.setColor(Color.GREEN);
+                }
+
+                g.fillOval(x, 100, 50, 50);
+                g.setColor(Color.BLACK);
+                g.drawString(String.valueOf(numbers[i]), x + 20, 130);
+
+                System.out.println(numbers[i]);
+                x += 70;
+
+            }
+
+
         }
     }
 
@@ -59,16 +84,14 @@ public class LottoFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String lottoNumString = "";
+        jLabel.setText("");
         int[] lottoNumber = lottoRandomNumber.getNumber();
-        for (int i = 0; i < lottoNumber.length ; i++) {
-            lottoNumString += lottoNumber[i] + " ";
-        }
-        circle = new Circle();
+        circle = new Circle(lottoNumber);
         add(circle);
         setVisible(true);
+        revalidate();
+        repaint();
 
-        jLabel.setText(lottoNumString);
     }
 
     // main
