@@ -56,7 +56,7 @@ public class LottoFrame extends JFrame implements ActionListener {
                 if(numbers[i] <= 10){
                     g.setColor(Color.YELLOW);
                 } else if (numbers[i]<=20) {
-                    g.setColor(Color.BLUE);
+                    g.setColor(Color.cyan);
                 } else if (numbers[i] <= 30) {
                     g.setColor(Color.RED);
                 } else if (numbers[i] <= 40) {
