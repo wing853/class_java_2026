@@ -14,9 +14,8 @@ public class MyFrame extends JFrame {
     private JLabel backgroundMap;
     private JLabel player;
     private JLabel enemy;
-    private ImageIcon playerIcon;
-    private ImageIcon playerIconL;
-    private ImageIcon playerIconR;
+    private ImageIcon playerIconL = new ImageIcon("images/playerL.png");;
+    private ImageIcon playerIconR = new ImageIcon("images/playerR.png");
     private ImageIcon playerIconDie;
     private ImageIcon enemyIcon;
 
@@ -41,11 +40,8 @@ public class MyFrame extends JFrame {
 
         // 플레이서 설정
         enemyIcon = new ImageIcon("images/enemyL.png");
-        playerIcon = new ImageIcon("images/playerL.png");
-        playerIconL = new ImageIcon("images/playerL.png");
-        playerIconR = new ImageIcon("images/playerR.png");
         playerIconDie = new ImageIcon("images/playerLDie.png");
-        player = new JLabel(playerIcon);
+        player = new JLabel(playerIconL);
         enemy = new JLabel(enemyIcon);
 
         player.setSize(CHARACTER_WIDTH, CHARACTER_hEIGHT);
@@ -77,7 +73,7 @@ public class MyFrame extends JFrame {
                     if(playerX < 90){
                         return;
                     }
-                    playerIcon.setImage(playerIconL.getImage());
+                    player.setIcon(playerIconL);
                     player.setLocation(playerX - MOVE, playerY);
                 } else if (keyCode == KeyEvent.VK_UP) {
                     if(playerY < 50) {
@@ -88,7 +84,7 @@ public class MyFrame extends JFrame {
                     if(playerX > 880) {
                         return;
                     }
-                    playerIcon.setImage(playerIconR.getImage());
+                    player.setIcon(playerIconR);
                     player.setLocation(playerX + MOVE, playerY);
                 } else if (keyCode == KeyEvent.VK_DOWN) {
                     if(playerY > 530) {
@@ -100,9 +96,12 @@ public class MyFrame extends JFrame {
         });
     }
 
+
+
     // 테스트 코드 - 메인 쓰레드
     public static void main(String[] args) {
         new MyFrame();
+
     }
 
 }
