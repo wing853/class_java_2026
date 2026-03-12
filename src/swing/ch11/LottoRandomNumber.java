@@ -1,41 +1,53 @@
 package swing.ch11;
 
+import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * [역할] 로또 번호 생성 전달 전담 클래스
+ * <p>
+ * SRP(Single Responsibility Principle) - 단일 책임 원칙(5가지 원칙)
+ * : 클래스는 하나의 책임만 가져야 한다.
+ * - 이 클래스는 로또 번호 생성만 담당해야한다
+ *
+ */
+
 public class LottoRandomNumber {
-    private int[] lotto = new int[6];
-    private int temp;
 
-    public void makeNumber() {
+    static final int LOTTO_NUMBER_COUNT = 6;
+
+    public int[] createNumber() {
+        // 1. 이중 for, while(set), 셔플
+        int[] lottoWinNum = new int[LOTTO_NUMBER_COUNT];
         Random random = new Random();
+        for (int i = 0; i < lottoWinNum.length; i++) {
+            // 1 ~ 45사이의 랜덤 숫자 생성
+            lottoWinNum[i] = random.nextInt(45) + 1;
 
-        for (int i = 0; i < lotto.length; i++) {
-            lotto[i] = random.nextInt(45) + 1;
-            ;
+            // 앞에서 이미 뽑은 숫자들과 중복 비교
             for (int j = 0; j < i; j++) {
-                if (lotto[i] == lotto[j]) {
+                if (lottoWinNum[i] == lottoWinNum[j]) {
+                    // 중복 발견 시점 i값을 되돌려서 같은 자리를 다시 뽑게 함
                     i--;
-                    break;
+                    break; // 중복 발견시 즉시 안쪽 for 탈출
                 }
             }
         }
-    }
+        // 오름차순 정렬
+        Arrays.sort(lottoWinNum); // 오름 차순 정렬이 기본값
 
-    public void sort() {
-        for (int i = 0; i < lotto.length; i++) {
-            for (int j = 0; j < lotto.length; j++) {
-                if (lotto[i] < lotto[j]) {
-                    temp = lotto[i];
-                    lotto[i] = lotto[j];
-                    lotto[j] = temp;
-                }
-            }
+        return lottoWinNum;
+    } // end of createNumber
+
+    // 테스트 코드
+    public static void main(String[] args) {
+        LottoRandomNumber lottoRandomNumber = new LottoRandomNumber();
+        int[] result = lottoRandomNumber.createNumber();
+
+        // 무조건 처음부터 끝까지 반복시켜야 할 때 많이 사용 함
+        for(int num: result) {
+            System.out.println(num);
         }
     }
 
-    public int[] getNumber() {
-        makeNumber();
-        sort();
-        return lotto;
-    }
 }

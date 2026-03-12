@@ -5,15 +5,28 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * 클래스의 역할 - 로또 게임 UI 전담 클래스
+ * 담당 역할
+ * - 화면 구성(버튼, 번호 출력 패널)
+ * - 버튼 클릭시 이벤트 처리
+ * - LottoRandomNumber 클래스에게 번호 생성을 요청하고 응답 받아 결과를 화면에 표시
+ */
+
 public class LottoFrame extends JFrame implements ActionListener {
 
-    private JButton button1;
-    private JPanel panel1;
-    private JLabel jLabel;
+    // 상수 모음
+    private static final String INITIAL_MASSAGE = "Game Start 버튼을 눌러주세요";
+    private static final String FONT_NAME = "고딕";
+    private static final int FONT_SIZE = 20;
+    private static final int CIRCLE_SIZE = 50;
+
+    private static boolean isInitialState = true;
+
+    private JButton button;
+    private LottoPanel lottoPanel;
     private LottoRandomNumber lottoRandomNumber;
-    private int init_x = 200;
-    private int init_y = 200;
-    private JPanel circle;
+    private int[] createNumbers; // 현재 화면에 표시할 번호 배열 선언
 
     public LottoFrame() {
         initData();
@@ -23,79 +36,77 @@ public class LottoFrame extends JFrame implements ActionListener {
 
     private void initData() {
         setTitle("Lotto Game");
-        setSize(500, 500);
+        setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        button1 = new JButton("Game start");
-        panel1 = new JPanel();
-        jLabel = new JLabel("Game Start 버튼을 눌러주세요", JLabel.CENTER);
 
+        button = new JButton("Game Start");
         lottoRandomNumber = new LottoRandomNumber();
+        lottoPanel = new LottoPanel();
+        createNumbers = new int[LottoRandomNumber.LOTTO_NUMBER_COUNT];
     }
 
     private void setInitLayout() {
         setLayout(new BorderLayout());
-        add(button1, BorderLayout.NORTH);
-        button1.setSize(100, 100);
+        add(button, BorderLayout.NORTH);
+        add(lottoPanel, BorderLayout.CENTER);
         setVisible(true);
-        add(jLabel, BorderLayout.CENTER);
-        jLabel.setFont(new Font("맑은 고딕", Font.BOLD, 50));
-
-    }
-
-    static class Circle extends JPanel {
-        int[] numbers;
-
-        public Circle(int[] numbers) {
-            this.numbers = numbers;
-        }
-
-        public void paint(Graphics g) {
-            int x = 50;
-            g.setFont(new Font("맑은고딕", Font.BOLD,15));
-            for (int i = 0; i < numbers.length; i++) {
-                if(numbers[i] <= 10){
-                    g.setColor(Color.YELLOW);
-                } else if (numbers[i]<=20) {
-                    g.setColor(Color.cyan);
-                } else if (numbers[i] <= 30) {
-                    g.setColor(Color.RED);
-                } else if (numbers[i] <= 40) {
-                    g.setColor(Color.GRAY);
-                } else if(numbers[i] <=45){
-                    g.setColor(Color.GREEN);
-                }
-
-                g.fillOval(x, 100, 50, 50);
-                g.setColor(Color.BLACK);
-                g.drawString(String.valueOf(numbers[i]), x + 20, 130);
-
-                System.out.println(numbers[i]);
-                x += 70;
-
-            }
-
-
-        }
     }
 
     private void addEventListener() {
-        button1.addActionListener(this);
+        button.addActionListener(this);
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        jLabel.setText("");
-        int[] lottoNumber = lottoRandomNumber.getNumber();
-        circle = new Circle(lottoNumber);
-        add(circle);
-        setVisible(true);
-        revalidate();
-        repaint();
-
+        isInitialState = false;
+        createNumbers = lottoRandomNumber.createNumber();
+        lottoPanel.repaint(); // lottoPanel의 paintComponant()를 다시 호출
     }
 
-    // main
+    private class LottoPanel extends JPanel {
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g); // 이전 그림을 지움
+
+            g.setFont(new Font(FONT_NAME, Font.BOLD, FONT_SIZE));
+            if (isInitialState) {
+                // 버튼을 누르지 않은 초기 상태
+                g.setColor(Color.GRAY);
+                g.drawString(INITIAL_MASSAGE, 160, 150);
+            } else {
+                // 번호 6개를 원 안에 표시
+                for (int i = 0; i < createNumbers.length; i++) {
+                    int x = 60 + (i * 80);
+                    int y = 80;
+
+                    // 번호 값에 따라 공 색상 구분
+                    g.setColor(getBallColor(createNumbers[i]));
+                    g.fillOval(x,y,CIRCLE_SIZE,CIRCLE_SIZE);
+
+                    // 원 테두리 설정
+                    g.setColor(Color.DARK_GRAY);
+                    g.drawOval(x,y,CIRCLE_SIZE,CIRCLE_SIZE);
+
+                    // 원 안에 숫자 출력
+                    g.setColor(Color.WHITE);
+                    String numStr = String.valueOf(createNumbers[i]);
+                    g.drawString(numStr,x + 17,y + 33);
+                }
+            }
+        }
+    }
+
+    private Color getBallColor(int number) {
+        if (number <= 10) return new Color(255,200,0); // 노란색
+        if (number <= 20) return new Color(0,80,180); // 파란색
+        if (number <= 30) return new Color(250,50,50); // 빨간색
+        if (number <= 40) return new Color(130,130,130); // 회색
+        return new Color(50,180,80); // 초록색
+    }
+
     public static void main(String[] args) {
         new LottoFrame();
-    } // end of main
+    }
 }
